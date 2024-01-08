@@ -1,0 +1,14 @@
+#pragma once
+void HideCursor(bool ok);
+void FixConsoleWindow();
+void TextColor(int x);
+int GetCurrentColor();
+void SetConsoleBlank();
+void HideCursor(bool ok);
+void SetConsoleSize(int w, int h);
+void FontSize(int x);
+void DrawBoard(int r, int c, int x, int y, int color);
+void DrawBox(int w, int h, int x, int y, int color, int Time);
+void DrawWall(int w, int h, int x, int y, int color);
+void PrintTank(int x, int y, int color, pair <int, int> direction);
+void PrintDefeatedTank(int x, int y, int color = RED);

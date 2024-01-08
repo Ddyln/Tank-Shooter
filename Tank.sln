@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tank", "Tank\Tank.vcxproj", "{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}.Debug|x64.ActiveCfg = Debug|x64
+		{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}.Debug|x64.Build.0 = Debug|x64
+		{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}.Debug|x86.ActiveCfg = Debug|Win32
+		{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}.Debug|x86.Build.0 = Debug|Win32
+		{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}.Release|x64.ActiveCfg = Release|x64
+		{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}.Release|x64.Build.0 = Release|x64
+		{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}.Release|x86.ActiveCfg = Release|Win32
+		{AAA99F07-CE6C-40AA-BAEC-8D5B1ACBA1E4}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F16E9BDF-7B2B-4BAB-87B8-BF7D47B74A6A}
+	EndGlobalSection
+EndGlobal
