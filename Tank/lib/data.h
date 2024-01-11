@@ -1,6 +1,6 @@
 #pragma once
 #pragma comment(lib, "Winmm.lib")
-
+#define _CRT_SECURE_NO_WARNINGS
 // Included libraries
 #include <iostream>
 #include <cctype>
@@ -85,12 +85,16 @@ using namespace std;
 #define TANK_DOWN (char)209
 #define TANK_LEFT (char)182
 #define TANK_RIGHT (char)199
-
+#define HIT 1
+#define BULLET_COLLISION '*'
 // moving keys
 #define W 87
 #define A 65
 #define S 83
 #define D 68
+#define GAME_OVER 1
+#define FINISH 2
+const char HP_BAR[] = { (char)219, (char)219, (char)219, (char)219};
 
 // others
 #define fi first
@@ -110,6 +114,39 @@ struct gameObject {
 	int x, y, hp, T, damage, color, flag;
 	typeOfObject type;
 	pair <int, int> direction;
+	struct moving {
+		int T, remain;
+		moving() {
+			T = remain = 0;
+		}
+		moving(int _T, int _remain) {
+			T = _T;
+			remain = _remain;
+		}
+	};
+	struct shooting {
+		int T, remain;
+		shooting() {
+			T = remain = 0;
+		}
+		shooting(int _T, int _remain) {
+			T = _T;
+			remain = _remain;
+		}
+	};
+	shooting shot;
+	moving move;
+	struct hitEffect {
+		int T, remain;
+		hitEffect() {
+			T = remain = 0;
+		}
+		hitEffect(int _T, int _remain) {
+			T = _T;
+			remain = _remain;
+		}
+	};
+	hitEffect he;
 	gameObject() {
 		x = y = hp = T = damage = flag = 0;
 		type = GROUND;
@@ -164,19 +201,17 @@ struct board {
 struct effectQueueElement {
 	int T, x, y, remain, color;
 	char c;
-	list <gameObject>::iterator enemy;
 	effectQueueElement() {
 		T = x = y = remain = color = 0;
 		c = '@';
 	}
-	effectQueueElement(int _T, int _x, int _y, int _remain, int _color, char _c, list <gameObject>::iterator _enemy) {
+	effectQueueElement(int _T, int _x, int _y, int _remain, int _color, char _c) {
 		T = _T;
 		x = _x;
 		y = _y;
 		remain = _remain;
 		color = _color;
 		c = _c;
-		enemy = _enemy;
 	}
 };
 
@@ -191,5 +226,14 @@ struct enemyDestInfo {
 		length = _length;
 		T = _T;
 		remain = _remain;
+	}
+};
+
+struct gameState {
+	int score, map;
+	string player;
+	gameState() {
+		score = map = 0;
+		player = "";
 	}
 };

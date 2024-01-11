@@ -8,12 +8,13 @@ board a;
 
 int main() {
 	srand(time(NULL));
+	FontSize(21);
 	SetConsoleBlank();
 	FixConsoleWindow();
 	SetConsoleSize(1200, 660);
 	HideCursor(1);
 	while (true) {
-		StartGame(a);
+		MainMenu(a);
 	}
 	return 0;
 }

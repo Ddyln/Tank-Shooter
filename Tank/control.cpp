@@ -28,13 +28,13 @@ void GotoBoard(int x, int y) {
 	GotoXY(--x + 30, --y + 2);
 }
 
-void MoveUp(board& a, gameObject& obj) {
+bool MoveUp(board& a, gameObject& obj) {
 	bool stay = 0;
 	if (obj.direction != make_pair(-1, 0)) stay = 1;
 	int& i = obj.y, & j = obj.x;
 	if (!stay) {
 		gameObject& nxt = a[i - 1][j];
-		if (nxt.type == WALL || nxt.type == PLAYER || nxt.type == ENEMY) return;
+		if (nxt.type == WALL || nxt.type == PLAYER || nxt.type == ENEMY) return 0;
 	}
 	obj.direction = { -1, 0 };
 	GotoBoard(j, i); cout << SPACE;
@@ -42,15 +42,16 @@ void MoveUp(board& a, gameObject& obj) {
 	i -= 1 ^ stay;
 	PrintTank(j, i, obj.color, obj.direction);
 	a[i][j] = obj;
+	return 1;
 }
 
-void MoveDown(board& a, gameObject& obj) {
+bool MoveDown(board& a, gameObject& obj) {
 	bool stay = 0;
 	if (obj.direction != make_pair(1, 0)) stay = 1;
 	int& i = obj.y, & j = obj.x;
 	if (!stay) {
 		gameObject& nxt = a[i + 1][j];
-		if (nxt.type == WALL || nxt.type == PLAYER || nxt.type == ENEMY) return;
+		if (nxt.type == WALL || nxt.type == PLAYER || nxt.type == ENEMY) return 0;
 	}
 	obj.direction = { 1, 0 };
 	GotoBoard(j, i); cout << SPACE;
@@ -58,15 +59,16 @@ void MoveDown(board& a, gameObject& obj) {
 	i += 1 ^ stay;
 	PrintTank(j, i, obj.color, obj.direction);
 	a[i][j] = obj;
+	return 1;
 }
 
-void MoveLeft(board& a, gameObject& obj) {
+bool MoveLeft(board& a, gameObject& obj) {
 	bool stay = 0;
 	if (obj.direction != make_pair(0, -1)) stay = 1;
 	int& i = obj.y, & j = obj.x;
 	if (!stay) {
 		gameObject& nxt = a[i][j - 1];
-		if (nxt.type == WALL || nxt.type == PLAYER || nxt.type == ENEMY) return;
+		if (nxt.type == WALL || nxt.type == PLAYER || nxt.type == ENEMY) return 0;
 	}
 	obj.direction = { 0, -1 };
 	GotoBoard(j, i); cout << SPACE;
@@ -74,15 +76,16 @@ void MoveLeft(board& a, gameObject& obj) {
 	j -= 1 ^ stay;;
 	PrintTank(j, i, obj.color, obj.direction);
 	a[i][j] = obj;
+	return 1;
 }
 
-void MoveRight(board& a, gameObject& obj) {
+bool MoveRight(board& a, gameObject& obj) {
 	bool stay = 0;
 	if (obj.direction != make_pair(0, 1)) stay = 1;
 	int& i = obj.y, & j = obj.x;
 	if (!stay) {
 		gameObject& nxt = a[i][j + 1];
-		if (nxt.type == WALL || nxt.type == PLAYER || nxt.type == ENEMY) return;
+		if (nxt.type == WALL || nxt.type == PLAYER || nxt.type == ENEMY) return 0;
 	}
 	obj.direction = { 0, 1 };
 	GotoBoard(j, i); cout << SPACE;
@@ -90,4 +93,5 @@ void MoveRight(board& a, gameObject& obj) {
 	j += 1 ^ stay;
 	PrintTank(j, i, obj.color, obj.direction);
 	a[i][j] = obj;
+	return 1;
 }

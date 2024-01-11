@@ -46,5 +46,11 @@
     <Text Include="assets\map01.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="assets\logo.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="assets\map02.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

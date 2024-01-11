@@ -139,7 +139,9 @@
     <ClInclude Include="lib\view.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="assets\logo.txt" />
     <Text Include="assets\map01.txt" />
+    <Text Include="assets\map02.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

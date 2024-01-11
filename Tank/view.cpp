@@ -180,6 +180,138 @@ void PrintDefeatedTank(int x, int y, int color) {
 	int tmp = GetCurrentColor();
 	GotoBoard(x, y);
 	TextColor(color);
-	cout << "#";
+	cout << char(177);
 	TextColor(tmp);
+}
+
+void PrintBullet(int j, int i, gameObject& obj) {
+	GotoBoard(j, i);
+	int tmp = GetCurrentColor();
+	TextColor(obj.color);
+	if (obj.damage == 1) {
+		if (obj.direction == make_pair(1, 0) || obj.direction == make_pair(-1, 0)) {
+			cout << V_LINE;
+		}
+		else {
+			cout << H_LINE;
+		}
+	}
+	TextColor(tmp);
+}
+
+void DisplayPlayerHP(gameObject& player) {
+	int tmp = GetCurrentColor();
+	TextColor(GREEN);
+	GotoXY(4, 4); cout << "HP: ";
+	for (int i = 0; i < 5; i++) cout << "    ";
+	GotoXY(8, 4);
+	for (int i = 0; i < player.hp; i++) cout << HP_BAR;
+	TextColor(tmp);
+}
+
+int GameOver() {
+	for (int i = 0; i < 3; i++) {
+		GotoBoard(25, 14);
+		cout << "GAME OVER.";
+		for (int j = 0; j < i; j++) cout << ".";
+		Sleep(700);
+	}
+	while (_kbhit()) _getch();
+	_getch();
+	return GAME_OVER;
+}
+
+void HoverButton(int pos) {
+	string button[] = { "     NEW GAME     ", "     CONTINUE     ", "    SCOREBOARD    ", "       HELP       " };
+	int tmpColor = GetCurrentColor();
+	TextColor(RED & 15 | BACKGROUND_YELLOW);
+	GotoXY(52, 14 + pos * 2);
+	cout << button[pos];
+	TextColor(tmpColor);
+}
+
+void UnhoverButton(int pos) {
+	string button[] = { "     NEW GAME     ", "     CONTINUE     ", "    SCOREBOARD    ", "       HELP       " };
+	int tmpColor = GetCurrentColor();
+	TextColor(BLACK);
+	GotoXY(52, 14 + pos * 2);
+	cout << button[pos];
+	TextColor(tmpColor);
+}
+
+void MainMenu(board& a) {
+	int tmpColor = GetCurrentColor();
+	SetConsoleBlank();
+	ifstream cin("assets/logo.txt");
+	SetConsoleOutputCP(65001);
+	TextColor(BLUE);
+	int score = 0;
+	GotoXY(0, 1);
+	while (cin.good()) {
+		string s;
+		getline(cin, s);
+		cout << s << endl;
+	}
+	SetConsoleOutputCP(437);
+	cin.close();
+
+	DrawBox(20, 9, 51, 13, BLACK, 0);
+	HoverButton(0);
+	for (int i = 1; i < 4; i++) UnhoverButton(i);
+	int pos = 0;
+	while (true) {
+		unsigned char c = toupper(_getch());
+		if (c == ENTER) {
+			switch (pos)
+			{
+			case 0:
+				StartGame(a, 1, score);
+				return;
+			case 1:
+
+				break;
+			case 2:
+
+				break;
+			case 3:
+
+				break;
+			}
+		}
+		else if (c == W || c == S) {
+			int oldPos = pos;
+			if (c == S) pos = (pos + 1) % 4;
+			else pos = (pos - 1 + 4) % 4;
+			UnhoverButton(oldPos);
+			HoverButton(pos);
+		}
+
+	}
+	TextColor(tmpColor);
+}
+
+void DisplayScore(int score) {
+	int tmp = GetCurrentColor();
+	TextColor(YELLOW);
+	GotoXY(1, 5); cout << "Score: ";
+	for (int i = 0; i < 5; i++) cout << "    ";
+	GotoXY(8, 5);
+	cout << score;
+	TextColor(tmp);
+}
+
+int Finish() {
+	for (int i = 0; i < 3; i++) {
+		GotoBoard(25, 14);
+		cout << "ROUND CLEAR.";
+		for (int j = 0; j < i; j++) cout << ".";
+		Sleep(700);
+	}
+	while (_kbhit()) _getch();
+	GotoBoard(20, 15);
+	cout << "Press ENTER to continue";
+	while (true) {
+		char c = toupper(_getch());
+		if (c == ENTER) return FINISH;
+	}
 }
