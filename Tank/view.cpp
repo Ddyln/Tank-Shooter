@@ -246,6 +246,7 @@ void MainMenu(board& a) {
 	SetConsoleOutputCP(65001);
 	TextColor(BLUE);
 	int score = 0;
+	string player = "";
 	GotoXY(0, 1);
 	while (cin.good()) {
 		string s;
@@ -265,11 +266,12 @@ void MainMenu(board& a) {
 			switch (pos)
 			{
 			case 0:
-				StartGame(a, 1, score);
+				AskPlayerName(player);
+				StartGame(a, 1, score, player);
 				return;
 			case 1:
 
-				break;
+				return;
 			case 2:
 
 				break;
@@ -298,6 +300,61 @@ void DisplayScore(int score) {
 	GotoXY(8, 5);
 	cout << score;
 	TextColor(tmp);
+}
+
+void AskSave(int map, int score, string player) {
+	SetConsoleBlank();
+	DrawBox(30, 7, 47, 10, CYAN, 0);
+	TextColor(CYAN);
+	GotoXY(52, 11); cout << "Do you want to save?";
+	DrawBox(7, 3, 53, 13, RED, 0);
+	TextColor(RED);
+	GotoXY(55, 14); cout << "YES";
+	DrawBox(7, 3, 63, 13, BLACK, 0);
+	TextColor(BLACK);
+	GotoXY(65, 14); cout << "NO";
+	int cnt = 0;
+	while (true) {
+		char c = toupper(_getch());
+		if (c == A || c == D) {
+			cnt ^= 1;
+			if (cnt) {
+				DrawBox(7, 3, 53, 13, BLACK, 0);
+				TextColor(BLACK);
+				GotoXY(55, 14); cout << "YES";
+				DrawBox(7, 3, 63, 13, RED, 0);
+				TextColor(RED);
+				GotoXY(65, 14); cout << "NO";
+			}
+			else {
+				DrawBox(7, 3, 53, 13, RED, 0);
+				TextColor(RED);
+				GotoXY(55, 14); cout << "YES";
+				DrawBox(7, 3, 63, 13, BLACK, 0);
+				TextColor(BLACK);
+				GotoXY(65, 14); cout << "NO";
+			}
+		}
+		else if (c == ENTER) {
+			if (cnt) return;
+			ofstream cout("data/" + player + ".txt");
+			cout << map << ' ' << score << endl << player << endl << CurrentDateTime();
+			cout.close();
+			return;
+		}
+	}
+}
+
+void AskPlayerName(string& player) {
+	SetConsoleBlank();
+	TextColor(BLACK);
+	GotoXY(52, 11); cout << "What is your name?";
+	while (true) {
+		DrawBox(30, 3, 47, 12, CYAN, 0);
+		GotoXY(48, 13); cout << " > ";
+		if (!EnterText(player, 25)) continue;
+		break;
+	}
 }
 
 int Finish() {

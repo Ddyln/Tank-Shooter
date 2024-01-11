@@ -41,6 +41,56 @@ char Wall(board &a, int i, int j) {
 	else return BOX_CROSS;
 }
 
+bool EnterText(string& s, int len) {
+	unsigned char c;
+	HideCursor(0);
+	while (true) {
+		c = _getch();
+		if (c == ENTER) {
+			break;
+		}
+		else if (c == ESC) {
+			int n = min(s.size(), len);
+			GotoXY(WhereX() - n, WhereY());
+			for (int i = 0; i < n; i++)
+				cout << ' ';
+			s = "";
+			HideCursor(1);
+			return 0;
+		}
+		else if (c == BACK_SPACE) {
+			if (s.size()) {
+				s.pop_back();
+				if (s.size() + 1 < len) {
+					GotoXY(WhereX() - 1, WhereY());
+					cout << ' ';
+					GotoXY(WhereX() - 1, WhereY());
+				}
+				else {
+					GotoXY(WhereX() - len + 1, WhereY());
+					int n = s.size();
+					cout << s.substr(n - len + 1);
+				}
+			}
+		}
+		else if (c == 224) {
+			c = _getch();
+		}
+		else if (c != TAB) {
+			s += c;
+			if (s.size() < len)
+				cout << c;
+			else {
+				GotoXY(WhereX() - len + 1, WhereY());
+				int n = s.size();
+				cout << s.substr(n - len + 1);
+			}
+		}
+	}
+	HideCursor(1);
+	return 1;
+}
+
 string ToString(int n) {
 	if (n == 0) return "0";
 	string res = "";
@@ -56,7 +106,7 @@ gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& ene
 	TextColor(BLACK);
 	GotoXY(9, 1); cout << "Level " << map;
 	ifstream cin("assets/map0" + ToString(map) + ".txt");
-	int m = 26, n = 60;
+	int m = BOARD_HEIGHT, n = BOARD_WIDTH;
 
 	for (int i = 1; i <= m; i++)
 		for (int j = 1; j <= n; j++) {
@@ -81,7 +131,6 @@ gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& ene
 	for (int i = 1; i <= m; i++) {
 		for (int j = 1; j <= n; j++) {
 			if (!a[i][j].type) continue;
-			//GotoXY(x0 + j - 1, y0 + i - 1);
 			GotoBoard(j, i);
 			cout << Wall(a, i, j);
 		}
@@ -380,7 +429,7 @@ void EnemyPlayerDetection(board& a, gameObject& player, list <gameObject>& enemy
 	}
 }
 
-void StartGame(board& a, int map, int& score) {
+void StartGame(board& a, int map, int& score, const string& playerName) {
 	SetConsoleBlank();
 	list <gameObject> enemy;
 	list <enemyDestInfo> enemyDestination;
@@ -394,14 +443,16 @@ void StartGame(board& a, int map, int& score) {
 		//CheckEffect(effectQueue, enemy);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
-			StartGame(a, ++map, score);
+			AskSave(++map, score, playerName);
+			StartGame(a, map, score, playerName);
 			return;
 		}
 		EnemyMove(a, enemy, enemyDestination);
 		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
-			StartGame(a, ++map, score);
+			AskSave(++map, score, playerName);
+			StartGame(a, map, score, playerName);
 			return;
 		}
 
@@ -410,7 +461,8 @@ void StartGame(board& a, int map, int& score) {
 		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
-			StartGame(a, ++map, score);
+			AskSave(++map, score, playerName);
+			StartGame(a, map, score, playerName);
 			return;
 		}
 		CheckEffect(effectQueue, enemy, player);

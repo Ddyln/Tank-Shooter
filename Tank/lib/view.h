@@ -18,3 +18,5 @@ int GameOver();
 void MainMenu(board& a);
 void DisplayScore(int score);
 int Finish();
+void AskSave(int map, int score, string player);
+void AskPlayerName(string& player);

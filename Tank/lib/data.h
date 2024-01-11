@@ -92,6 +92,7 @@ using namespace std;
 #define A 65
 #define S 83
 #define D 68
+#define TAB 9
 #define GAME_OVER 1
 #define FINISH 2
 const char HP_BAR[] = { (char)219, (char)219, (char)219, (char)219};
