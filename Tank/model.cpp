@@ -102,7 +102,7 @@ string ToString(int n) {
 	return res;
 }
 
-gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination, int map) {
+gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination, int map, int score) {
 	TextColor(BLACK);
 	GotoXY(9, 1); cout << "Level " << map;
 	ifstream cin("assets/map0" + ToString(map) + ".txt");
@@ -146,7 +146,7 @@ gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& ene
 		GotoXY(0, 0);
 	}
 	DisplayPlayerHP(player);
-	DisplayScore(0);
+	DisplayScore(score);
 	return player;
 }
 
@@ -429,20 +429,36 @@ void EnemyPlayerDetection(board& a, gameObject& player, list <gameObject>& enemy
 	}
 }
 
+void SaveScore(int score, int map, const string& player) {
+	ofstream cout("data/ranking/rank.txt", ios::app);
+	cout << score << ' ' << map << endl << player << endl << CurrentDateTime() << endl;
+	cout.close();
+}
+
+bool MapExist(int map) {
+	string f = "assets/map0" + ToString(map) + ".txt";
+	return (fopen(f.c_str(), "r") ? 1 : 0);
+}
+
 void StartGame(board& a, int map, int& score, const string& playerName) {
+	if (!MapExist(map)) {
+		Congratulation();
+		return;
+	}
 	SetConsoleBlank();
 	list <gameObject> enemy;
 	list <enemyDestInfo> enemyDestination;
-	gameObject player = LoadMap(a, enemy, enemyDestination, map);
+	gameObject player = LoadMap(a, enemy, enemyDestination, map, score);
 	list <pair <gameObject, int>> playerBullet, enemyBullet;
 	queue <effectQueueElement> effectQueue;
 	EnemyPlayerDetection(a, player, enemy, enemyDestination, enemyBullet);
-	int state = 0, oldScore = score;
+	int state = 0;
 	while (true) {
 		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score);
 		//CheckEffect(effectQueue, enemy);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
+			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
 			StartGame(a, map, score, playerName);
 			return;
@@ -451,6 +467,7 @@ void StartGame(board& a, int map, int& score, const string& playerName) {
 		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
+			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
 			StartGame(a, map, score, playerName);
 			return;
@@ -461,6 +478,7 @@ void StartGame(board& a, int map, int& score, const string& playerName) {
 		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
+			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
 			StartGame(a, map, score, playerName);
 			return;

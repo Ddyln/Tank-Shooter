@@ -139,6 +139,7 @@
     <ClInclude Include="lib\view.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="assets\congrat.txt" />
     <Text Include="assets\logo.txt" />
     <Text Include="assets\map01.txt" />
     <Text Include="assets\map02.txt" />

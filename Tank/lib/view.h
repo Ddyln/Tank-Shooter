@@ -19,4 +19,7 @@ void MainMenu(board& a);
 void DisplayScore(int score);
 int Finish();
 void AskSave(int map, int score, string player);
-void AskPlayerName(string& player);
+void Continue(board& a);
+void ShowRank();
+bool AskPlayerName(string& player);
+void Congratulation();

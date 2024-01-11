@@ -135,6 +135,32 @@ void DrawBox(int w, int h, int x, int y, int color, int Time) {
 	TextColor(tmp);
 }
 
+void DrawBoxMini(int w, int h, int x, int y, int color)
+{
+	int tmp = GetCurrentColor();
+	TextColor(color);
+	GotoXY(x, y);
+	cout << TOP_LEFT;
+	for (int i = 1; i < w - 1; i++)
+		cout << H_LINE;
+	cout << TOP_RIGHT;
+
+	for (int i = 1; i < h - 1; i++) {
+		GotoXY(x, i + y);
+		cout << V_LINE;
+		for (int j = 1; j < w - 1; j++)
+			cout << SPACE;
+		cout << V_LINE;
+	}
+
+	GotoXY(x, h + y - 1);
+	cout << BOTTOM_LEFT;
+	for (int i = 1; i < w - 1; i++)
+		cout << H_LINE;
+	cout << BOTTOM_RIGHT;
+	TextColor(tmp);
+}
+
 void DrawWall(int w, int h, int x, int y, int color) {
 	int tmp = GetCurrentColor();
 	TextColor(color);
@@ -239,6 +265,221 @@ void UnhoverButton(int pos) {
 	TextColor(tmpColor);
 }
 
+void ShowRank() {
+	ifstream cin("data/ranking/rank.txt");
+	int score, map;
+	string name, date;
+	vector <gameState> v;
+	while (cin >> score) {
+		cin >> map;
+		cin.ignore();
+		getline(cin, name);
+		cin >> date;
+		if (name == "") name = "<empty>";
+		v.push_back(gameState(score, map, name, date));
+	}
+	cin.close();
+	sort(v.begin(), v.end(), [](const gameState& a, const gameState& b) {
+		if (a.score != b.score) return a.score > b.score;
+		return a.map < b.map;
+	});
+	int n = v.size();
+	SetConsoleBlank();
+	GotoXY(47, 27);
+	TextColor(BLACK);
+	cout << " " << L_TRIANGLE << " PRESS ESC TO COMEBACK " << R_TRIANGLE << " ";
+	DrawBox(70, 25, 26, 2, BLUE, 0);
+	TextColor(CYAN);
+	GotoXY(28, 3); cout << "RANK";
+	GotoXY(41, 3); cout << "PLAYER";
+	GotoXY(56, 3); cout << "SCORE";
+	GotoXY(66, 3); cout << "MAP";
+	GotoXY(81, 3); cout << "DATE";
+	for (int i = 0; i < min(n, 10); i++) {
+		if (i > 2) TextColor(BLACK);
+		else if (i == 0) TextColor(RED);
+		else if (i == 1) TextColor(YELLOW);
+		else TextColor(GREEN);
+		GotoXY(29, 5 + i * 2); cout << i + 1;
+		if (v[i].player.size() > 16) 
+			v[i].player = v[i].player.substr(0, 13) + "...";
+		GotoXY(43 - v[i].player.size() / 2, 5 + i * 2); cout << v[i].player;
+		GotoXY(56, 5 + i * 2); cout << v[i].score;
+		GotoXY(67, 5 + i * 2); cout << v[i].map;
+		GotoXY(74, 5 + i * 2); cout << v[i].date;
+	}
+	while (true) {
+		char c = toupper(_getch());
+		if (c == ESC) break;
+	}
+}
+
+void Help() {
+	SetConsoleBlank();
+	DrawBox(98, 25, 11, 2, CYAN, 0);
+	DrawBoxMini(94, 23, 13, 3, LIGHT_CYAN);
+	TextColor(RED);
+	GotoXY(20, 8);
+	cout << L_TRIANGLE << " RULE " << R_TRIANGLE;
+	GotoXY(40, 5);
+	cout << "The game is played on a board with 26 rows and 60 columns." << endl;
+	GotoXY(40, 7);
+	cout << "To win the round, player needs to defeat all the enemies" << endl;
+	GotoXY(40, 8);
+	cout << "The score will be added by 1000 for each defeated ememies." << endl;
+	GotoXY(40, 9);
+	cout << "Getting hit by an enemy will decrease the HP by 1 and the" << endl;
+	GotoXY(40, 10);
+	cout << "score by 500. ";
+	GotoXY(40, 12);
+	cout << "Defeat all the enemies to advance to the next round.";
+
+	TextColor(GREEN);
+	GotoXY(20, 15);
+	cout << L_TRIANGLE << " MOVE " << R_TRIANGLE;
+	GotoXY(40, 15);
+	cout << "Up: W";
+	GotoXY(40, 16);
+	cout << "Down: S";
+	GotoXY(55, 15);
+	cout << "Left: A";
+	GotoXY(55, 16);
+	cout << "Right: D";
+	GotoXY(70, 15);
+	cout << "Shoot: Enter";
+	//GotoXY(70, 16);
+	//cout << "Pause game: Esc";
+	TextColor(MAGENTA);
+	GotoXY(18, 21);
+	cout << L_TRIANGLE << " ABOUT US " << R_TRIANGLE;
+	GotoXY(78, 21);
+	cout << "DSA's lab project";
+	GotoXY(73, 22);
+	cout << "22CTT4A - VNUHCM US - 1/2024";
+	GotoXY(40, 20);
+	cout << "Nguyen Duy Lam    -  22120181";
+	GotoXY(40, 21);
+	cout << "Dang Duy Lan      -  22120182";
+	GotoXY(40, 22);
+	cout << "Nguyen Nhat Long  -  22120194";
+	GotoXY(40, 23);
+	cout << "Tang Senh Manh    -  22120202";
+	TextColor(LIGHT_RED);
+	GotoXY(47, 26);
+	cout << " " << L_TRIANGLE << " PRESS ESC TO COMEBACK " << R_TRIANGLE << " ";
+	while (true) {
+		char c = _getch();
+		if (c == ESC)
+			return;
+	}
+}
+
+void HoverSave(const vector <gameState>& v, int pos, int page) {
+	int tmp = GetCurrentColor();
+	TextColor(RED & 15 | BACKGROUND_YELLOW);
+	GotoXY(16, 5 + 2 * pos);
+	string s = v[8 * page + pos].date;
+	if (s == "") s = "<empty>";
+	int n = 38 - s.size();
+	n /= 2;
+	for (int i = 0; i < n; i++) s = " " + s + " ";
+	if (s.size() < 38) s = " " + s;
+	cout << s;
+	// --------------
+	s = v[8 * page + pos].player;
+	if (s.size() > 20) {
+		while (s.size() > 17) s.pop_back();
+		s += "...";
+	}
+	DrawBoxMini(30, 5, 75, 7, BLACK);
+	if (!s.empty()) {
+		TextColor(GREEN);
+		GotoXY(76, 8);
+		cout << "Player: " << s;
+		GotoXY(76, 9);
+		TextColor(RED);
+		cout << "Score: " << v[8 * page + pos].score;
+		TextColor(YELLOW);
+		GotoXY(76, 10);
+		cout << "Map: " << v[8 * page + pos].map;
+	}
+	TextColor(tmp);
+}
+
+void UnhoverSave(const vector <gameState>& v, int pos, int page) {
+	int tmp = GetCurrentColor();
+	TextColor(BLACK);
+	GotoXY(16, 5 + 2 * pos);
+	string s = v[8 * page + pos].date;
+	if (s == "") s = "<empty>";
+	int n = 38 - s.size();
+	n /= 2;
+	for (int i = 0; i < n; i++) s = " " + s + " ";
+	if (s.size() < 38) s = " " + s;
+	cout << s;
+	TextColor(tmp);
+}
+
+void Continue(board& a) {
+	ifstream cin("data/save.txt");
+	string fn;
+	vector <gameState> v;
+	while (cin >> fn) {
+		ifstream cin("data/save/" + fn + ".txt");
+		int map, score;
+		string name;
+		cin >> map >> score;
+		cin.ignore();
+		getline(cin, name);
+		cin.close();
+		string nfn = fn;
+		for (char& c : nfn) if (c == '_') c = ':';
+		v.push_back(gameState(score, map, name, nfn));
+	}
+	int total = 8, pos = 0, page = 0;
+	while (v.size() % total != 0) v.push_back(gameState(0, 0, "", ""));
+	int n = v.size();
+	SetConsoleBlank();
+	GotoXY(45, 26);
+	TextColor(MAGENTA);
+	cout << " " << L_TRIANGLE << " PRESS ESC TO COMEBACK " << R_TRIANGLE << " ";
+	DrawBox(40, 17, 15, 4, BLUE, 0);
+	for (int i = 1; i < total; i++) UnhoverSave(v, i, 0);
+	HoverSave(v, 0, 0);
+	string nPage = ToString(n / total);
+	if (nPage.size() < 2) nPage = "0" + nPage;
+	TextColor(CYAN);
+	GotoXY(31, 21); cout << "<01 / " + nPage << ">";
+	while (true) {
+		char c = toupper(_getch());
+		if (c == ENTER) {
+			if (v[8 * page + pos].player == "") continue;
+			StartGame(a, v[8 * page + pos].map, v[8 * page + pos].score, v[8 * page + pos].player);
+			break;
+		}
+		if (c == S || c == W) {
+			int nPos = pos;
+			if (c == S) nPos = (nPos + 1) % total;
+			else nPos = (nPos - 1 + total) % total;
+			UnhoverSave(v, pos, page);
+			HoverSave(v, nPos, page);
+			pos = nPos;
+		}
+		else if (c == A || c == D) {
+			if (c == A) page = (page - 1 + n / total) % (n / total);
+			else page = (page + 1) % (n / total);
+			GotoXY(32, 21);
+			if (ToString(page + 1).size() < 2) cout << "0";
+			cout << ToString(page + 1);
+			pos = 0;
+			for (int i = 1; i < total; i++) UnhoverSave(v, i, page);
+			HoverSave(v, 0, page);
+		}
+		else if (c == ESC) break;
+	}
+	cin.close();
+}
+
 void MainMenu(board& a) {
 	int tmpColor = GetCurrentColor();
 	SetConsoleBlank();
@@ -266,18 +507,18 @@ void MainMenu(board& a) {
 			switch (pos)
 			{
 			case 0:
-				AskPlayerName(player);
-				StartGame(a, 1, score, player);
+				if (AskPlayerName(player))
+					StartGame(a, 1, score, player);
 				return;
 			case 1:
-
+				Continue(a);
 				return;
 			case 2:
-
-				break;
+				ShowRank();
+				return;
 			case 3:
-
-				break;
+				Help();
+				return;
 			}
 		}
 		else if (c == W || c == S) {
@@ -337,24 +578,25 @@ void AskSave(int map, int score, string player) {
 		}
 		else if (c == ENTER) {
 			if (cnt) return;
-			ofstream cout("data/" + player + ".txt");
-			cout << map << ' ' << score << endl << player << endl << CurrentDateTime();
+			string fn = CurrentDateTime();
+			for (char& c : fn) if (c == ':') c = '_';
+			ofstream cout("data/save/" + fn + ".txt");
+			cout << map << ' ' << score << endl << player << endl << fn;
 			cout.close();
+			cout.open("data/save.txt", ios::app);
+			cout << fn << endl;
 			return;
 		}
 	}
 }
 
-void AskPlayerName(string& player) {
+bool AskPlayerName(string& player) {
 	SetConsoleBlank();
 	TextColor(BLACK);
 	GotoXY(52, 11); cout << "What is your name?";
-	while (true) {
-		DrawBox(30, 3, 47, 12, CYAN, 0);
-		GotoXY(48, 13); cout << " > ";
-		if (!EnterText(player, 25)) continue;
-		break;
-	}
+	DrawBox(30, 3, 47, 12, CYAN, 0);
+	GotoXY(48, 13); cout << " > ";
+	return EnterText(player, 25);
 }
 
 int Finish() {
@@ -370,5 +612,29 @@ int Finish() {
 	while (true) {
 		char c = toupper(_getch());
 		if (c == ENTER) return FINISH;
+	}
+}
+
+void Congratulation() {
+	SetConsoleBlank();
+	int color[] = { RED, BLUE, YELLOW, GREEN, BLACK, CYAN }, n = 6, cnt = 0;
+	while (true) {
+		ifstream cin("assets/congrat.txt");
+		if (_kbhit()) {
+			char c = _getch();
+			break;
+		}
+		SetConsoleOutputCP(65001);
+		TextColor(color[cnt++]);
+		cnt %= n;
+		GotoXY(0, 8);
+		while (cin.good()) {
+			string s;
+			getline(cin, s);
+			cout << s << endl;
+		}
+		SetConsoleOutputCP(437);
+		cin.close();
+		Sleep(100);
 	}
 }

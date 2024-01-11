@@ -232,9 +232,15 @@ struct enemyDestInfo {
 
 struct gameState {
 	int score, map;
-	string player;
+	string player, date;
 	gameState() {
 		score = map = 0;
-		player = "";
+		player = date = "";
+	}
+	gameState(int _score, int _map, string _player, string _date) {
+		score = _score;
+		map = _map;
+		player = _player;
+		date = _date;
 	}
 };
