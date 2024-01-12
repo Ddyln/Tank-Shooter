@@ -150,7 +150,7 @@ gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& ene
 	return player;
 }
 
-int BulletCollision(board& a, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination,list <pair <gameObject, int>>& playerBullet, list <pair <gameObject, int>>& enemyBullet, gameObject& player, queue <effectQueueElement>& effectQueue, int& score) {
+int BulletCollision(board& a, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination,list <pair <gameObject, int>>& playerBullet, list <pair <gameObject, int>>& enemyBullet, gameObject& player, queue <effectQueueElement>& effectQueue, int& score, gameSound& sound) {
 	int cnt[BOARD_HEIGHT + 2][BOARD_WIDTH + 2];
 	memset(cnt, 0, sizeof cnt);
 	auto it = playerBullet.begin();
@@ -227,6 +227,7 @@ int BulletCollision(board& a, list <gameObject>& enemy, list <enemyDestInfo>& en
 			int& hp = a[i][j].hp;
 			hp -= it->fi.damage;
 			DisplayScore(score -= 500);
+			sound.play("hit");
 			player.hp = hp;
 			DisplayPlayerHP(player);
 			list <gameObject>::iterator tmp;
@@ -285,6 +286,7 @@ int BulletCollision(board& a, list <gameObject>& enemy, list <enemyDestInfo>& en
 					if (it->first.x == j && it->first.y == i) it = enemyBullet.erase(it);
 					else it++;
 				}
+				sound.play("bonk");
 				int tmp = GetCurrentColor();
 				TextColor(RED & 15 | BACKGROUND_YELLOW);
 				GotoBoard(j, i); cout << BULLET_COLLISION;
@@ -402,7 +404,7 @@ void EnemyMove(board& a, list <gameObject>& enemy, list <enemyDestInfo>& enemyDe
 	}
 }
 
-void EnemyPlayerDetection(board& a, gameObject& player, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination, list <pair <gameObject, int>>& enemyBullet) {
+void EnemyPlayerDetection(board& a, gameObject& player, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination, list <pair <gameObject, int>>& enemyBullet, gameSound& sound) {
 	auto e = enemy.begin();
 	auto ed = enemyDestination.begin();
 	while (e != enemy.end()) {
@@ -419,6 +421,7 @@ void EnemyPlayerDetection(board& a, gameObject& player, list <gameObject>& enemy
 				else MoveUp(a, *e);
 			}
 			if (clock() - e->shot.T > e->shot.remain) {
+				sound.play("pew");
 				enemyBullet.push_front({ gameObject(e->x + ndx, e->y + ndy, -1, e->direction, e->damage, RED, BULLET), clock() });
 				e->shot.T = clock();
 			}
@@ -440,7 +443,7 @@ bool MapExist(int map) {
 	return (fopen(f.c_str(), "r") ? 1 : 0);
 }
 
-void StartGame(board& a, int map, int& score, const string& playerName) {
+void StartGame(board& a, int map, int& score, const string& playerName, gameSound& sound) {
 	if (!MapExist(map)) {
 		Congratulation();
 		return;
@@ -451,36 +454,36 @@ void StartGame(board& a, int map, int& score, const string& playerName) {
 	gameObject player = LoadMap(a, enemy, enemyDestination, map, score);
 	list <pair <gameObject, int>> playerBullet, enemyBullet;
 	queue <effectQueueElement> effectQueue;
-	EnemyPlayerDetection(a, player, enemy, enemyDestination, enemyBullet);
+	EnemyPlayerDetection(a, player, enemy, enemyDestination, enemyBullet, sound);
 	int state = 0;
 	while (true) {
-		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score);
+		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score, sound);
 		//CheckEffect(effectQueue, enemy);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
 			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
-			StartGame(a, map, score, playerName);
+			StartGame(a, map, score, playerName, sound);
 			return;
 		}
 		EnemyMove(a, enemy, enemyDestination);
-		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score);
+		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score, sound);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
 			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
-			StartGame(a, map, score, playerName);
+			StartGame(a, map, score, playerName, sound);
 			return;
 		}
 
-		EnemyPlayerDetection(a, player, enemy, enemyDestination, enemyBullet);
+		EnemyPlayerDetection(a, player, enemy, enemyDestination, enemyBullet, sound);
 		MoveEnemyBullet(a, enemyBullet);
-		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score);
+		state = BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue, score, sound);
 		if (state == GAME_OVER) return;
 		if (state == FINISH) {
 			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
-			StartGame(a, map, score, playerName);
+			StartGame(a, map, score, playerName, sound);
 			return;
 		}
 		CheckEffect(effectQueue, enemy, player);
@@ -489,20 +492,24 @@ void StartGame(board& a, int map, int& score, const string& playerName) {
 			unsigned char c = toupper(_getch());
 			if (c == ENTER) {
 				if (clock() - player.shot.T > player.shot.remain) {
+					sound.play("pew");
 					playerBullet.push_front({ gameObject(player.x + player.direction.se, player.y + player.direction.fi, -1, player.direction, player.damage, GREEN, BULLET), clock() });
 					player.shot.T = clock();
 				}
 			}
-			else if (c == W || c == A || c == S || c == D) {
+			else if (c == ESC) {
+				sound.play("click");
+				return;
+			}
+			else if (c == myKeyW || c == myKeyA || c == myKeyS || c == myKeyD) {
 				if (clock() - player.move.T < player.move.remain) continue;
-				if (c == W) MoveUp(a, player);
-				else if (c == A) MoveLeft(a, player);
-				else if (c == S) MoveDown(a, player);
-				else if (c == D) MoveRight(a, player);
+				if (c == myKeyW) MoveUp(a, player);
+				else if (c == myKeyA) MoveLeft(a, player);
+				else if (c == myKeyS) MoveDown(a, player);
+				else if (c == myKeyD) MoveRight(a, player);
 				player.move.T = clock();
 			}
 		}
 		MovePlayerBullet(a, playerBullet);
-		//BulletCollision(a, enemy, enemyDestination, playerBullet, enemyBullet, player, effectQueue);
 	}
 }

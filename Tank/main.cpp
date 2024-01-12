@@ -2,9 +2,11 @@
 #include "lib/view.h"
 #include "lib/control.h"
 #include "lib/model.h"
+
 using namespace std;
 
 board a;
+gameSound sound;
 
 int main() {
 	srand(time(NULL));
@@ -14,7 +16,7 @@ int main() {
 	SetConsoleSize(1200, 660);
 	HideCursor(1);
 	while (true) {
-		MainMenu(a);
+		MainMenu(a, sound);
 	}
 	return 0;
 }

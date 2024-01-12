@@ -135,8 +135,7 @@ void DrawBox(int w, int h, int x, int y, int color, int Time) {
 	TextColor(tmp);
 }
 
-void DrawBoxMini(int w, int h, int x, int y, int color)
-{
+void DrawBoxMini(int w, int h, int x, int y, int color) {
 	int tmp = GetCurrentColor();
 	TextColor(color);
 	GotoXY(x, y);
@@ -265,7 +264,7 @@ void UnhoverButton(int pos) {
 	TextColor(tmpColor);
 }
 
-void ShowRank() {
+void ShowRank(gameSound& sound) {
 	ifstream cin("data/ranking/rank.txt");
 	int score, map;
 	string name, date;
@@ -420,7 +419,7 @@ void UnhoverSave(const vector <gameState>& v, int pos, int page) {
 	TextColor(tmp);
 }
 
-void Continue(board& a) {
+void Continue(board& a, gameSound& sound) {
 	ifstream cin("data/save.txt");
 	string fn;
 	vector <gameState> v;
@@ -454,19 +453,19 @@ void Continue(board& a) {
 		char c = toupper(_getch());
 		if (c == ENTER) {
 			if (v[8 * page + pos].player == "") continue;
-			StartGame(a, v[8 * page + pos].map, v[8 * page + pos].score, v[8 * page + pos].player);
+			StartGame(a, v[8 * page + pos].map, v[8 * page + pos].score, v[8 * page + pos].player, sound);
 			break;
 		}
-		if (c == S || c == W) {
+		if (c == myKeyS || c == myKeyW) {
 			int nPos = pos;
-			if (c == S) nPos = (nPos + 1) % total;
+			if (c == myKeyS) nPos = (nPos + 1) % total;
 			else nPos = (nPos - 1 + total) % total;
 			UnhoverSave(v, pos, page);
 			HoverSave(v, nPos, page);
 			pos = nPos;
 		}
-		else if (c == A || c == D) {
-			if (c == A) page = (page - 1 + n / total) % (n / total);
+		else if (c == myKeyA || c == myKeyD) {
+			if (c == myKeyA) page = (page - 1 + n / total) % (n / total);
 			else page = (page + 1) % (n / total);
 			GotoXY(32, 21);
 			if (ToString(page + 1).size() < 2) cout << "0";
@@ -480,7 +479,7 @@ void Continue(board& a) {
 	cin.close();
 }
 
-void MainMenu(board& a) {
+void MainMenu(board& a, gameSound& sound) {
 	int tmpColor = GetCurrentColor();
 	SetConsoleBlank();
 	ifstream cin("assets/logo.txt");
@@ -503,27 +502,28 @@ void MainMenu(board& a) {
 	int pos = 0;
 	while (true) {
 		unsigned char c = toupper(_getch());
+		sound.play("click");
 		if (c == ENTER) {
 			switch (pos)
 			{
 			case 0:
 				if (AskPlayerName(player))
-					StartGame(a, 1, score, player);
+					StartGame(a, 1, score, player, sound);
 				return;
 			case 1:
-				Continue(a);
+				Continue(a, sound);
 				return;
 			case 2:
-				ShowRank();
+				ShowRank(sound);
 				return;
 			case 3:
 				Help();
 				return;
 			}
 		}
-		else if (c == W || c == S) {
+		else if (c == myKeyW || c == myKeyS) {
 			int oldPos = pos;
-			if (c == S) pos = (pos + 1) % 4;
+			if (c == myKeyS) pos = (pos + 1) % 4;
 			else pos = (pos - 1 + 4) % 4;
 			UnhoverButton(oldPos);
 			HoverButton(pos);
@@ -557,7 +557,7 @@ void AskSave(int map, int score, string player) {
 	int cnt = 0;
 	while (true) {
 		char c = toupper(_getch());
-		if (c == A || c == D) {
+		if (c == myKeyA || c == myKeyD) {
 			cnt ^= 1;
 			if (cnt) {
 				DrawBox(7, 3, 53, 13, BLACK, 0);
