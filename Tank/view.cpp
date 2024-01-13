@@ -419,7 +419,7 @@ void UnhoverSave(const vector <gameState>& v, int pos, int page) {
 	TextColor(tmp);
 }
 
-void Continue(board& a, gameSound& sound) {
+void Continue(board& a, gameSound& sound, vector<int> &bonus_stats) {
 	ifstream cin("data/save.txt");
 	string fn;
 	vector <gameState> v;
@@ -453,7 +453,7 @@ void Continue(board& a, gameSound& sound) {
 		char c = toupper(_getch());
 		if (c == ENTER) {
 			if (v[8 * page + pos].player == "") continue;
-			StartGame(a, v[8 * page + pos].map, v[8 * page + pos].score, v[8 * page + pos].player, sound);
+			StartGame(a, v[8 * page + pos].map, v[8 * page + pos].score, v[8 * page + pos].player, sound, bonus_stats);
 			break;
 		}
 		if (c == myKeyS || c == myKeyW) {
@@ -482,6 +482,7 @@ void Continue(board& a, gameSound& sound) {
 void MainMenu(board& a, gameSound& sound) {
 	int tmpColor = GetCurrentColor();
 	SetConsoleBlank();
+	vector<int> bonus_stats{ 0,0,0,0 };
 	ifstream cin("assets/logo.txt");
 	SetConsoleOutputCP(65001);
 	TextColor(BLUE);
@@ -508,10 +509,10 @@ void MainMenu(board& a, gameSound& sound) {
 			{
 			case 0:
 				if (AskPlayerName(player))
-					StartGame(a, 1, score, player, sound);
+					StartGame(a, 1, score, player, sound, bonus_stats);
 				return;
 			case 1:
-				Continue(a, sound);
+				Continue(a, sound, bonus_stats);
 				return;
 			case 2:
 				ShowRank(sound);
@@ -666,3 +667,105 @@ void Loading() {
 		Sleep(15);
 	}
 }
+
+
+
+void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
+	// Can upgrade HP, damage, shooting speed, moving speed
+	// Display the Upgrade Menu
+	int tmpColor = GetCurrentColor();
+	SetConsoleBlank();
+	//SetConsoleOutputCP(65001);
+	GotoXY(0, 1);
+	TextColor(YELLOW);
+	cout << "SCORE: " << score;
+	vector<int> cost{ 5000, 3000, 1000, 1000 };
+	DrawBox(30, 9, 45, 13, BLACK, 0);
+	HoverUpgradeButton(0);
+	for (int i = 1; i < 4; i++) UnhoverUpgradeButton(i);
+	int pos = 0;
+	UpgradeCost(cost);
+	TextColor(RED);
+	GotoXY(45, 10);
+	cout << "CHOOSE AN UPGRADE FOR YOUR TANK";
+	while (true) {
+		unsigned char c = toupper(_getch());
+		if (c == ENTER) {
+			switch (pos)
+			{
+			case 0: // HP
+				if (score - cost[0] < 0) {
+					GotoXY(43, 23);
+					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
+					continue;
+				}
+				score -= cost[0];
+				bonus_stats[0] += 1;
+				return;
+			case 1: // DAMAGE
+				
+				if (score - cost[1] < 0) {
+					GotoXY(43, 23);
+					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
+					continue;
+				}
+				bonus_stats[1] += 1;
+				score -= cost[1];
+				return;
+			case 2: //MOVING SPEED
+				if (score - cost[2] < 0) {
+					GotoXY(43, 23);
+					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
+					continue;
+				}
+				bonus_stats[2] += 20;
+				score -= cost[2];
+				return;
+			case 3: //ATTACK SPEED
+				if (score - cost[3] < 0) {
+					GotoXY(43, 23);
+					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
+					continue;
+				}
+				bonus_stats[3] += 30;
+				score -= cost[3];
+				return;
+			}
+		}
+		else if (c == myKeyW || c == myKeyS) {
+			int oldPos = pos;
+			if (c == myKeyS) pos = (pos + 1) % 4;
+			else pos = (pos - 1 + 4) % 4;
+			UnhoverUpgradeButton(oldPos);
+			HoverUpgradeButton(pos);
+		}
+
+	}
+	TextColor(tmpColor);
+}
+
+void UpgradeCost(vector<int> cost) {
+	for (int i = 0; i < 4; i++) {
+		GotoXY(61, 14+i*2);
+		cout << cost[i] << " SCORE";
+	}
+}
+
+void HoverUpgradeButton(int pos) {
+	string button[] = { "HP             ", "DAMAGE         ", "MOVING SPEED   ", "ATTACK SPEED   "};
+	int tmpColor = GetCurrentColor();
+	TextColor(RED & 15 | BACKGROUND_YELLOW);
+	GotoXY(46, 14 + pos * 2);
+	cout << button[pos];
+	TextColor(tmpColor);
+}
+
+void UnhoverUpgradeButton(int pos) {
+	string button[] = { "HP             ", "DAMAGE         ", "MOVING SPEED   ", "ATTACK SPEED   " };
+	int tmpColor = GetCurrentColor();
+	TextColor(BLACK);
+	GotoXY(46, 14 + pos * 2);
+	cout << button[pos];
+	TextColor(tmpColor);
+}
+

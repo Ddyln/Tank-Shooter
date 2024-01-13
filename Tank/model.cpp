@@ -102,7 +102,7 @@ string ToString(int n) {
 	return res;
 }
 
-gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination, int map, int score) {
+gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination, int map, int score, vector<int> bonus_stats) {
 	TextColor(BLACK);
 	GotoXY(9, 1); cout << "Level " << map;
 	ifstream cin("assets/map0" + ToString(map) + ".txt");
@@ -118,9 +118,12 @@ gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& ene
 	pair <int, int> dir;
 	gameObject player;
 	cin >> x >> y >> hp >> dir.first >> dir.second >> damage;
+	hp += bonus_stats[0];
+	damage += bonus_stats[1];
 	player = gameObject(x, y, hp, dir, damage, GREEN, PLAYER);
 	int numOfEnemies = 0;
 	cin >> numOfEnemies;
+	//numOfEnemies = 1;
 	for (int i = 0; i < numOfEnemies; i++) {
 		cin >> x >> y >> hp >> dir.first >> dir.second >> damage;
 		enemy.push_back(gameObject(x, y, hp, dir, damage, RED, ENEMY));
@@ -136,8 +139,8 @@ gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& ene
 		}
 	}
 	PrintTank(player.x, player.y, GREEN, player.direction);
-	player.shot = gameObject::shooting(0, 200);
-	player.move = gameObject::moving(0, 100);
+	player.move = gameObject::moving(0, 100 - bonus_stats[2]);
+	player.shot = gameObject::shooting(0, 200 - bonus_stats[3]);
 	a[player.y][player.x] = player;
 	for (auto& tank : enemy) {
 		PrintTank(tank.x, tank.y, tank.color, tank.direction);
@@ -443,7 +446,7 @@ bool MapExist(int map) {
 	return (fopen(f.c_str(), "r") ? 1 : 0);
 }
 
-void StartGame(board& a, int map, int& score, const string& playerName, gameSound& sound) {
+void StartGame(board& a, int map, int& score, const string& playerName, gameSound& sound, vector<int> &bonus_stats) {
 	if (!MapExist(map)) {
 		Congratulation();
 		return;
@@ -451,7 +454,7 @@ void StartGame(board& a, int map, int& score, const string& playerName, gameSoun
 	SetConsoleBlank();
 	list <gameObject> enemy;
 	list <enemyDestInfo> enemyDestination;
-	gameObject player = LoadMap(a, enemy, enemyDestination, map, score);
+	gameObject player = LoadMap(a, enemy, enemyDestination, map, score, bonus_stats);
 	list <pair <gameObject, int>> playerBullet, enemyBullet;
 	queue <effectQueueElement> effectQueue;
 	EnemyPlayerDetection(a, player, enemy, enemyDestination, enemyBullet, sound);
@@ -463,7 +466,8 @@ void StartGame(board& a, int map, int& score, const string& playerName, gameSoun
 		if (state == FINISH) {
 			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
-			StartGame(a, map, score, playerName, sound);
+			AskUpgrade(score, playerName, bonus_stats);
+			StartGame(a, map, score, playerName, sound, bonus_stats);
 			return;
 		}
 		EnemyMove(a, enemy, enemyDestination);
@@ -472,7 +476,7 @@ void StartGame(board& a, int map, int& score, const string& playerName, gameSoun
 		if (state == FINISH) {
 			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
-			StartGame(a, map, score, playerName, sound);
+			StartGame(a, map, score, playerName, sound, bonus_stats);
 			return;
 		}
 
@@ -483,7 +487,7 @@ void StartGame(board& a, int map, int& score, const string& playerName, gameSoun
 		if (state == FINISH) {
 			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
-			StartGame(a, map, score, playerName, sound);
+			StartGame(a, map, score, playerName, sound, bonus_stats);
 			return;
 		}
 		CheckEffect(effectQueue, enemy, player);

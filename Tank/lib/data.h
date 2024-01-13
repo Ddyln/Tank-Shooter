@@ -184,6 +184,18 @@ struct gameObject {
 		else if (type == ENEMY) 
 			T = 80;
 	}
+	void increaseHealth(int amount) {
+		hp += amount;
+	}
+	void increaseShootingSpeed(int amount) {
+		shot.T += amount;
+	}
+	void increaseMovingSpeed(int amount) {
+		move.T += amount;
+	}
+	void increaseDamage(int amount) {
+		damage += amount;
+	}
 };
 
 struct board {
