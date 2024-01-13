@@ -1,5 +1,4 @@
 #pragma once
-#pragma comment(lib, "Winmm.lib")
 #define _CRT_SECURE_NO_WARNINGS
 // Included libraries
 #include <iostream>
@@ -16,6 +15,7 @@
 #include <queue>
 #include <sstream>
 #include <list>
+#include "SFML/Audio.hpp"
 // Namespace
 using namespace std;
 
@@ -88,10 +88,10 @@ using namespace std;
 #define HIT 1
 #define BULLET_COLLISION '*'
 // moving keys
-#define W 87
-#define A 65
-#define S 83
-#define D 68
+#define myKeyW 87
+#define myKeyA 65
+#define myKeyS 83
+#define myKeyD 68
 #define TAB 9
 #define GAME_OVER 1
 #define FINISH 2
@@ -242,5 +242,31 @@ struct gameState {
 		map = _map;
 		player = _player;
 		date = _date;
+	}
+};
+
+struct gameSound {
+	int cnt;
+	sf::SoundBuffer buffer[256];
+	sf::Sound snd[256];
+	void add(int& cnt, int val) {
+		(cnt += val) %= 256;
+	}
+	gameSound() {
+		cnt = 0;
+	}
+	void gameOver() {
+		buffer[cnt].loadFromFile("thay-giao-ba-cuoi.wav");
+		snd[cnt].setVolume(100.f);
+		snd[cnt].setBuffer(buffer[cnt]);
+		snd[cnt].play();
+		add(cnt, 1);
+	}
+	void play(const string& fn) {
+		buffer[cnt].loadFromFile("assets/sound/" + fn + ".wav");
+		snd[cnt].setVolume(100.f);
+		snd[cnt].setBuffer(buffer[cnt]);
+		snd[cnt].play();
+		add(cnt, 1);
 	}
 };

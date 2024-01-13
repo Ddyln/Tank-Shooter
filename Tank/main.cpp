@@ -2,9 +2,11 @@
 #include "lib/view.h"
 #include "lib/control.h"
 #include "lib/model.h"
+
 using namespace std;
 
 board a;
+gameSound sound;
 
 int main() {
 
@@ -17,7 +19,7 @@ int main() {
 	Loading();
 	HideCursor(1);
 	while (true) {
-		MainMenu(a);
+		MainMenu(a, sound);
 	}
 	return 0;
 }

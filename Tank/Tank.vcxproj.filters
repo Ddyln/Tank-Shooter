@@ -49,10 +49,25 @@
     <Text Include="assets\logo.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="assets\map02.txt">
+    <Text Include="assets\map05.txt">
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="assets\congrat.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="assets\map02.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="assets\map03.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="assets\map04.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="assets\map10.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="assets\map06.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
