@@ -221,6 +221,23 @@ void PrintBullet(int j, int i, gameObject& obj) {
 			cout << H_LINE;
 		}
 	}
+	else if(obj.damage == 2) {
+		if (obj.direction == make_pair(1, 0) || obj.direction == make_pair(-1, 0)) {
+			cout << char(249);
+		}
+		else {
+			cout << char(249);
+		}
+	}
+	else {
+		if (obj.direction == make_pair(1, 0) || obj.direction == make_pair(-1, 0)) {
+			cout << char(4);
+		}
+		else {
+			cout << char(4);
+		}
+	}
+	// The more damage, the shape of the bullet will change
 	TextColor(tmp);
 }
 
@@ -668,18 +685,14 @@ void Loading() {
 	}
 }
 
-
-
 void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
 	// Can upgrade HP, damage, shooting speed, moving speed
-	// Display the Upgrade Menu
 	int tmpColor = GetCurrentColor();
 	SetConsoleBlank();
-	//SetConsoleOutputCP(65001);
 	GotoXY(0, 1);
 	TextColor(YELLOW);
 	cout << "SCORE: " << score;
-	vector<int> cost{ 5000, 3000, 1000, 1000 };
+	vector<int> cost{ 5000, 5000, 3000, 3000 };
 	DrawBox(30, 9, 45, 13, BLACK, 0);
 	HoverUpgradeButton(0);
 	for (int i = 1; i < 4; i++) UnhoverUpgradeButton(i);
@@ -701,9 +714,10 @@ void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
 				}
 				score -= cost[0];
 				bonus_stats[0] += 1;
+				GotoXY(61, 14); cout << "UPGRADED!";
+				Sleep(2000);
 				return;
 			case 1: // DAMAGE
-				
 				if (score - cost[1] < 0) {
 					GotoXY(43, 23);
 					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
@@ -711,6 +725,8 @@ void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
 				}
 				bonus_stats[1] += 1;
 				score -= cost[1];
+				GotoXY(61, 14+2); cout << "UPGRADED!";
+				Sleep(2000);
 				return;
 			case 2: //MOVING SPEED
 				if (score - cost[2] < 0) {
@@ -720,6 +736,8 @@ void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
 				}
 				bonus_stats[2] += 20;
 				score -= cost[2];
+				GotoXY(61, 14+4); cout << "UPGRADED!";
+				Sleep(2000);
 				return;
 			case 3: //ATTACK SPEED
 				if (score - cost[3] < 0) {
@@ -729,6 +747,8 @@ void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
 				}
 				bonus_stats[3] += 30;
 				score -= cost[3];
+				GotoXY(61, 14+6); cout << "UPGRADED!";
+				Sleep(2000);
 				return;
 			}
 		}
@@ -746,13 +766,13 @@ void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
 
 void UpgradeCost(vector<int> cost) {
 	for (int i = 0; i < 4; i++) {
-		GotoXY(61, 14+i*2);
+		GotoXY(63, 14+i*2);
 		cout << cost[i] << " SCORE";
 	}
 }
 
 void HoverUpgradeButton(int pos) {
-	string button[] = { "HP             ", "DAMAGE         ", "MOVING SPEED   ", "ATTACK SPEED   "};
+	string button[] = { "HP           +1", "DAMAGE       +1", "MOVING SPEED +20", "ATTACK SPEED +30"};
 	int tmpColor = GetCurrentColor();
 	TextColor(RED & 15 | BACKGROUND_YELLOW);
 	GotoXY(46, 14 + pos * 2);
@@ -761,7 +781,7 @@ void HoverUpgradeButton(int pos) {
 }
 
 void UnhoverUpgradeButton(int pos) {
-	string button[] = { "HP             ", "DAMAGE         ", "MOVING SPEED   ", "ATTACK SPEED   " };
+	string button[] = { "HP              ", "DAMAGE          ", "MOVING SPEED    ", "ATTACK SPEED    " };
 	int tmpColor = GetCurrentColor();
 	TextColor(BLACK);
 	GotoXY(46, 14 + pos * 2);

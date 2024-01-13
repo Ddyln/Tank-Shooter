@@ -102,6 +102,7 @@ const char HP_BAR[] = { (char)219, (char)219, (char)219, (char)219};
 #define se second
 #define SPACE (char)32
 
+
 // Data types
 enum typeOfObject {
 	GROUND,
@@ -183,18 +184,6 @@ struct gameObject {
 			T = 25;
 		else if (type == ENEMY) 
 			T = 80;
-	}
-	void increaseHealth(int amount) {
-		hp += amount;
-	}
-	void increaseShootingSpeed(int amount) {
-		shot.T += amount;
-	}
-	void increaseMovingSpeed(int amount) {
-		move.T += amount;
-	}
-	void increaseDamage(int amount) {
-		damage += amount;
 	}
 };
 

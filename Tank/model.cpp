@@ -123,7 +123,6 @@ gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& ene
 	player = gameObject(x, y, hp, dir, damage, GREEN, PLAYER);
 	int numOfEnemies = 0;
 	cin >> numOfEnemies;
-	//numOfEnemies = 1;
 	for (int i = 0; i < numOfEnemies; i++) {
 		cin >> x >> y >> hp >> dir.first >> dir.second >> damage;
 		enemy.push_back(gameObject(x, y, hp, dir, damage, RED, ENEMY));
@@ -476,6 +475,7 @@ void StartGame(board& a, int map, int& score, const string& playerName, gameSoun
 		if (state == FINISH) {
 			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
+			AskUpgrade(score, playerName, bonus_stats);
 			StartGame(a, map, score, playerName, sound, bonus_stats);
 			return;
 		}
@@ -487,6 +487,7 @@ void StartGame(board& a, int map, int& score, const string& playerName, gameSoun
 		if (state == FINISH) {
 			SaveScore(score, map, playerName);
 			AskSave(++map, score, playerName);
+			AskUpgrade(score, playerName, bonus_stats);
 			StartGame(a, map, score, playerName, sound, bonus_stats);
 			return;
 		}
