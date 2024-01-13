@@ -29,3 +29,4 @@ void AskUpgrade(int& score, string player, vector<int> &bonus_stats);
 void UpgradeCost(vector<int> cost);
 void HoverUpgradeButton(int pos);
 void UnhoverUpgradeButton(int pos);
+void DisplayPlayerStat(vector<int> bonus_stats);

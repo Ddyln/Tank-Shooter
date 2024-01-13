@@ -244,9 +244,9 @@ void PrintBullet(int j, int i, gameObject& obj) {
 void DisplayPlayerHP(gameObject& player) {
 	int tmp = GetCurrentColor();
 	TextColor(GREEN);
-	GotoXY(4, 4); cout << "HP: ";
-	for (int i = 0; i < 5; i++) cout << "    ";
-	GotoXY(8, 4);
+	GotoXY(7, 4); cout << "HP: ";
+	for (int i = 0; i < 5; i++) cout << "   ";
+	GotoXY(11, 4);
 	for (int i = 0; i < player.hp; i++) cout << HP_BAR;
 	TextColor(tmp);
 }
@@ -557,10 +557,33 @@ void MainMenu(board& a, gameSound& sound) {
 void DisplayScore(int score) {
 	int tmp = GetCurrentColor();
 	TextColor(YELLOW);
-	GotoXY(1, 5); cout << "Score: ";
-	for (int i = 0; i < 5; i++) cout << "    ";
-	GotoXY(8, 5);
+	GotoXY(4, 12); cout << "Score: ";
+	for (int i = 0; i < 5; i++) cout << "   ";
+	GotoXY(11, 12);
 	cout << score;
+	TextColor(tmp);
+}
+
+void DisplayPlayerStat(vector<int> bonus_stats) {
+	int tmp = GetCurrentColor();
+	TextColor(RED);
+	GotoXY(3, 6); cout << "Damage: ";
+	for (int i = 0; i < 4; i++) cout << "   ";
+	GotoXY(11, 6);
+	for (int i = 0; i <= bonus_stats[1]; i += 1)
+		cout << HP_BAR;
+	TextColor(BLUE);
+	GotoXY(1, 8); cout << "Movement: ";
+	for (int i = 0; i < 4; i++) cout << "   ";
+	GotoXY(11, 8);
+	for (int i = 0; i <= bonus_stats[2]; i += 20)
+		cout << HP_BAR;
+	TextColor(MAGENTA);
+	GotoXY(1, 10); cout << "Shooting: ";
+	for (int i = 0; i < 4; i++) cout << "   ";
+	GotoXY(11, 10);
+	for (int i = 0; i <= bonus_stats[3]; i += 30)
+		cout << HP_BAR;
 	TextColor(tmp);
 }
 

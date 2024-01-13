@@ -95,7 +95,7 @@ using namespace std;
 #define TAB 9
 #define GAME_OVER 1
 #define FINISH 2
-const char HP_BAR[] = { (char)219, (char)219, (char)219, (char)219};
+const char HP_BAR[] = { (char)219, (char)219, (char)219};
 
 // others
 #define fi first
