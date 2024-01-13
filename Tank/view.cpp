@@ -247,7 +247,7 @@ int GameOver() {
 }
 
 void HoverButton(int pos) {
-	string button[] = { "     NEW GAME     ", "     CONTINUE     ", "    SCOREBOARD    ", "       HELP       " };
+	string button[] = { "     NEW GAME     ", "     CONTINUE     ", "    SCOREBOARD    ", "       HELP       ", "       EXIT       "};
 	int tmpColor = GetCurrentColor();
 	TextColor(RED & 15 | BACKGROUND_YELLOW);
 	GotoXY(52, 14 + pos * 2);
@@ -256,7 +256,7 @@ void HoverButton(int pos) {
 }
 
 void UnhoverButton(int pos) {
-	string button[] = { "     NEW GAME     ", "     CONTINUE     ", "    SCOREBOARD    ", "       HELP       " };
+	string button[] = { "     NEW GAME     ", "     CONTINUE     ", "    SCOREBOARD    ", "       HELP       ", "       EXIT       " };
 	int tmpColor = GetCurrentColor();
 	TextColor(BLACK);
 	GotoXY(52, 14 + pos * 2);
@@ -496,9 +496,9 @@ void MainMenu(board& a, gameSound& sound) {
 	SetConsoleOutputCP(437);
 	cin.close();
 
-	DrawBox(20, 9, 51, 13, BLACK, 0);
+	DrawBox(20, 11, 51, 13, BLACK, 0);
 	HoverButton(0);
-	for (int i = 1; i < 4; i++) UnhoverButton(i);
+	for (int i = 1; i < 5; i++) UnhoverButton(i);
 	int pos = 0;
 	while (true) {
 		unsigned char c = toupper(_getch());
@@ -519,12 +519,15 @@ void MainMenu(board& a, gameSound& sound) {
 			case 3:
 				Help();
 				return;
+			case 4:
+				GotoXY(0, 24);
+				exit(0);
 			}
 		}
 		else if (c == myKeyW || c == myKeyS) {
 			int oldPos = pos;
-			if (c == myKeyS) pos = (pos + 1) % 4;
-			else pos = (pos - 1 + 4) % 4;
+			if (c == myKeyS) pos = (pos + 1) % 5;
+			else pos = (pos - 1 + 5) % 5;
 			UnhoverButton(oldPos);
 			HoverButton(pos);
 		}
