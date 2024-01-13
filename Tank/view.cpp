@@ -482,6 +482,8 @@ void Continue(board& a, gameSound& sound) {
 void MainMenu(board& a, gameSound& sound) {
 	int tmpColor = GetCurrentColor();
 	SetConsoleBlank();
+	GotoXY(0, 3);
+	BackGround(0, 3, GRAY);
 	ifstream cin("assets/logo.txt");
 	SetConsoleOutputCP(65001);
 	TextColor(BLUE);
@@ -640,4 +642,30 @@ void Congratulation() {
 		cin.close();
 		Sleep(100);
 	}
+}
+
+void BackGround(int x, int y, int color) {
+	SetConsoleBlank();
+	ifstream cin("assets/background.txt");
+	SetConsoleOutputCP(65001);
+	TextColor(color);
+	GotoXY(x, y);
+	while (cin.good()) {
+		string s;
+		getline(cin, s);
+		cout << s << endl;
+	}
+	SetConsoleOutputCP(437);
+	cin.close();
+}
+
+void Loading() {
+	DrawBox(40, 3, 40, 26, BLACK, 0);
+	TextColor(BLUE);
+	GotoXY(41, 27);
+	for (int i = 0; i < 38; i++) {
+		cout << char(219);
+		Sleep(1);
+	}
+		
 }

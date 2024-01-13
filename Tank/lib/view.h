@@ -23,3 +23,5 @@ void Continue(board& a, gameSound& sound);
 void ShowRank(gameSound& sound);
 bool AskPlayerName(string& player);
 void Congratulation();
+void BackGround(int x, int y, int color);
+void Loading();
