@@ -255,13 +255,6 @@ struct gameSound {
 	gameSound() {
 		cnt = 0;
 	}
-	void gameOver() {
-		buffer[cnt].loadFromFile("thay-giao-ba-cuoi.wav");
-		snd[cnt].setVolume(100.f);
-		snd[cnt].setBuffer(buffer[cnt]);
-		snd[cnt].play();
-		add(cnt, 1);
-	}
 	void play(const string& fn) {
 		buffer[cnt].loadFromFile("assets/sound/" + fn + ".wav");
 		snd[cnt].setVolume(100.f);
