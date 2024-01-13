@@ -15,9 +15,9 @@ int main() {
 	SetConsoleBlank();
 	FixConsoleWindow();
 	SetConsoleSize(1200, 660);
+	HideCursor(1);
 	BackGround(0, 1, BLUE);
 	Loading();
-	HideCursor(1);
 	while (true) {
 		MainMenu(a, sound);
 	}

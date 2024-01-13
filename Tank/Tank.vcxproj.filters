@@ -70,5 +70,8 @@
     <Text Include="assets\map06.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="assets\background.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
