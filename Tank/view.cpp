@@ -326,11 +326,12 @@ void ShowRank(gameSound& sound) {
 	}
 	while (true) {
 		char c = toupper(_getch());
+		sound.play("click");
 		if (c == ESC) break;
 	}
 }
 
-void Help() {
+void Help(gameSound& sound) {
 	SetConsoleBlank();
 	DrawBox(98, 25, 11, 2, CYAN, 0);
 	DrawBoxMini(94, 23, 13, 3, LIGHT_CYAN);
@@ -385,6 +386,7 @@ void Help() {
 	cout << " " << L_TRIANGLE << " PRESS ESC TO COMEBACK " << R_TRIANGLE << " ";
 	while (true) {
 		char c = _getch();
+		sound.play("click");
 		if (c == ESC)
 			return;
 	}
@@ -408,7 +410,7 @@ void HoverSave(const vector <gameState>& v, int pos, int page) {
 		s += "...";
 	}
 	DrawBoxMini(30, 5, 75, 7, BLACK);
-	if (!s.empty()) {
+	if (v[8 * page + pos].map) {
 		TextColor(GREEN);
 		GotoXY(76, 8);
 		cout << "Player: " << s;
@@ -468,8 +470,10 @@ void Continue(board& a, gameSound& sound, vector<int> &bonus_stats) {
 	GotoXY(31, 21); cout << "<01 / " + nPage << ">";
 	while (true) {
 		char c = toupper(_getch());
+		sound.play("click");
 		if (c == ENTER) {
-			if (v[8 * page + pos].player == "") continue;
+			if (v[8 * page + pos].map == 0) continue;
+			sound.play("battle");
 			StartGame(a, v[8 * page + pos].map, v[8 * page + pos].score, v[8 * page + pos].player, sound, bonus_stats);
 			break;
 		}
@@ -525,8 +529,10 @@ void MainMenu(board& a, gameSound& sound) {
 			switch (pos)
 			{
 			case 0:
-				if (AskPlayerName(player))
+				if (AskPlayerName(player)) {
+					sound.play("battle");
 					StartGame(a, 1, score, player, sound, bonus_stats);
+				}
 				return;
 			case 1:
 				Continue(a, sound, bonus_stats);
@@ -535,7 +541,7 @@ void MainMenu(board& a, gameSound& sound) {
 				ShowRank(sound);
 				return;
 			case 3:
-				Help();
+				Help(sound);
 				return;
 			case 4:
 				GotoXY(0, 24);
@@ -568,19 +574,19 @@ void DisplayPlayerStat(vector<int> bonus_stats) {
 	int tmp = GetCurrentColor();
 	TextColor(RED);
 	GotoXY(3, 6); cout << "Damage: ";
-	for (int i = 0; i < 4; i++) cout << "   ";
+	for (int i = 0; i < 5; i++) cout << "   ";
 	GotoXY(11, 6);
 	for (int i = 0; i <= bonus_stats[1]; i += 1)
 		cout << HP_BAR;
 	TextColor(BLUE);
 	GotoXY(1, 8); cout << "Movement: ";
-	for (int i = 0; i < 4; i++) cout << "   ";
+	for (int i = 0; i < 5; i++) cout << "   ";
 	GotoXY(11, 8);
 	for (int i = 0; i <= bonus_stats[2]; i += 20)
 		cout << HP_BAR;
 	TextColor(MAGENTA);
 	GotoXY(1, 10); cout << "Shooting: ";
-	for (int i = 0; i < 4; i++) cout << "   ";
+	for (int i = 0; i < 5; i++) cout << "   ";
 	GotoXY(11, 10);
 	for (int i = 0; i <= bonus_stats[3]; i += 30)
 		cout << HP_BAR;

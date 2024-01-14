@@ -253,19 +253,28 @@ struct gameState {
 
 struct gameSound {
 	int cnt;
-	sf::SoundBuffer buffer[256];
-	sf::Sound snd[256];
+	sf::SoundBuffer buffer[255];
+	sf::Sound snd[255];
+	sf::Music music;
 	void add(int& cnt, int val) {
-		(cnt += val) %= 256;
+		(cnt += val) %= 255;
 	}
 	gameSound() {
 		cnt = 0;
 	}
 	void play(const string& fn) {
-		buffer[cnt].loadFromFile("assets/sound/" + fn + ".wav");
-		snd[cnt].setVolume(100.f);
-		snd[cnt].setBuffer(buffer[cnt]);
-		snd[cnt].play();
-		add(cnt, 1);
+		if (fn == "bgm" || fn == "battle") {
+			music.openFromFile("assets/sound/" + fn + ".wav");
+			music.setVolume(50.f);
+			music.setLoop(true);
+			music.play();
+		}
+		else {
+			buffer[cnt].loadFromFile("assets/sound/" + fn + ".wav");
+			snd[cnt].setVolume(100.f);
+			snd[cnt].setBuffer(buffer[cnt]);
+			snd[cnt].play();
+			add(cnt, 1);
+		}
 	}
 };

@@ -15,6 +15,7 @@ void PrintDefeatedTank(int x, int y, int color = RED);
 void PrintBullet(int j, int i, gameObject& obj);
 void DisplayPlayerHP(gameObject& player);
 int GameOver();
+void Help(gameSound& sound);
 void MainMenu(board& a, gameSound& sound);
 void DisplayScore(int score);
 int Finish();

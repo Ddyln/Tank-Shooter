@@ -9,7 +9,6 @@ board a;
 gameSound sound;
 
 int main() {
-
 	srand(time(NULL));
 	FontSize(21);
 	SetConsoleBlank();
@@ -19,6 +18,7 @@ int main() {
 	BackGround(0, 1, BLUE);
 	Loading();
 	while (true) {
+		sound.play("bgm");
 		MainMenu(a, sound);
 	}
 	return 0;
