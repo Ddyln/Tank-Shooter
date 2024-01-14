@@ -805,7 +805,7 @@ void CheckAndPrintStatus(vector<int> bonus_stats, vector<int> cost,int score, in
 		
 		GotoXY(45, 10);
 		cout << "CHOOSE AN UPGRADE FOR YOUR TANK";
-		GotoXY(90, 25); cout << "Press SPACE to coninue";
+		GotoXY(90, 25); cout << "Press SPACE to continue";
 		GotoXY(3, 3); cout << "SCORE: " << score;
 		UpgradeCost(cost); // Print out the cost
 		bool flag = false;
