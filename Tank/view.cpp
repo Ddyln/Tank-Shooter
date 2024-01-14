@@ -689,68 +689,79 @@ void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
 	// Can upgrade HP, damage, shooting speed, moving speed
 	int tmpColor = GetCurrentColor();
 	SetConsoleBlank();
-	GotoXY(0, 1);
 	TextColor(YELLOW);
-	cout << "SCORE: " << score;
 	vector<int> cost{ 5000, 5000, 3000, 3000 };
-	DrawBox(30, 9, 45, 13, BLACK, 0);
+	DrawBox(29, 9, 45, 13, BLACK, 0);
+	CheckAndPrintStatus(bonus_stats, cost, score, 0, 0);
 	HoverUpgradeButton(0);
 	for (int i = 1; i < 4; i++) UnhoverUpgradeButton(i);
 	int pos = 0;
-	UpgradeCost(cost);
 	TextColor(RED);
-	GotoXY(45, 10);
-	cout << "CHOOSE AN UPGRADE FOR YOUR TANK";
+	bool upgraded[4]{ 0 };
 	while (true) {
 		unsigned char c = toupper(_getch());
 		if (c == ENTER) {
 			switch (pos)
 			{
 			case 0: // HP
-				if (score - cost[0] < 0) {
-					GotoXY(43, 23);
-					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
+				if (upgraded[pos])
 					continue;
+				if (score - cost[pos] < 0) {
+					CheckAndPrintStatus(bonus_stats, cost, score, pos, 2);
 				}
-				score -= cost[0];
-				bonus_stats[0] += 1;
-				GotoXY(61, 14); cout << "UPGRADED!";
-				Sleep(2000);
-				return;
+				else {
+					score -= cost[pos];
+					bonus_stats[pos] += 1;
+					CheckAndPrintStatus(bonus_stats, cost, score, pos, 1);
+					upgraded[pos] = 1;
+				}
+				continue;
 			case 1: // DAMAGE
-				if (score - cost[1] < 0) {
-					GotoXY(43, 23);
-					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
+				if (upgraded[pos])
 					continue;
+				if (score - cost[pos] < 0) {
+					CheckAndPrintStatus(bonus_stats, cost, score, pos, 2);
 				}
-				bonus_stats[1] += 1;
-				score -= cost[1];
-				GotoXY(61, 14+2); cout << "UPGRADED!";
-				Sleep(2000);
-				return;
+				else
+				{
+					bonus_stats[pos] += 1;
+					score -= cost[pos];
+					CheckAndPrintStatus(bonus_stats, cost, score, pos, 1);
+					upgraded[pos] = 1;
+				}
+				continue;
 			case 2: //MOVING SPEED
+				if (upgraded[pos])
+					continue;
 				if (score - cost[2] < 0) {
-					GotoXY(43, 23);
-					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
-					continue;
+					CheckAndPrintStatus(bonus_stats, cost, score, pos, 2);
 				}
-				bonus_stats[2] += 20;
-				score -= cost[2];
-				GotoXY(61, 14+4); cout << "UPGRADED!";
-				Sleep(2000);
-				return;
+				else
+				{
+					bonus_stats[pos] += 20;
+					score -= cost[pos];
+					CheckAndPrintStatus(bonus_stats, cost, score, pos, 1);
+					upgraded[pos] = 1;
+				}
+				continue;
 			case 3: //ATTACK SPEED
-				if (score - cost[3] < 0) {
-					GotoXY(43, 23);
-					cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
+				if (upgraded[pos])
 					continue;
+				if (score - cost[3] < 0) {
+					CheckAndPrintStatus(bonus_stats, cost, score, pos, 2);
 				}
-				bonus_stats[3] += 30;
-				score -= cost[3];
-				GotoXY(61, 14+6); cout << "UPGRADED!";
-				Sleep(2000);
-				return;
+				else
+				{
+					bonus_stats[pos] += 30;
+					score -= cost[pos];
+					CheckAndPrintStatus(bonus_stats, cost, score, pos, 1);
+					upgraded[pos] = 1;
+				}
+				continue;
 			}
+		}
+		else if (c == SPACE) {
+			return;
 		}
 		else if (c == myKeyW || c == myKeyS) {
 			int oldPos = pos;
@@ -759,20 +770,66 @@ void AskUpgrade(int& score, string player, vector<int> &bonus_stats) {
 			UnhoverUpgradeButton(oldPos);
 			HoverUpgradeButton(pos);
 		}
-
 	}
 	TextColor(tmpColor);
 }
 
+void CheckAndPrintStatus(vector<int> bonus_stats, vector<int> cost,int score, int pos, int to_be_print) {
+	if(to_be_print == 0) // Default
+	{
+		GotoXY(46, 12); cout << "STATS";
+		GotoXY(63, 12); cout << "SCORE";
+		
+		GotoXY(45, 10);
+		cout << "CHOOSE AN UPGRADE FOR YOUR TANK";
+		GotoXY(90, 25); cout << "Press SPACE to coninue";
+		GotoXY(3, 3); cout << "SCORE: " << score;
+		UpgradeCost(cost); // Print out the cost
+		bool flag = false;
+		if (pos == 0 && bonus_stats[pos] >= HP) flag = true;
+		if (pos == 1 && bonus_stats[pos] >= DAMAGE) flag = true;
+		if (pos == 2 && bonus_stats[pos] >= MS) flag = true;
+		if (pos == 3 && bonus_stats[pos] >= AS) flag = true;
+		if (flag)
+		{
+			GotoXY(63, 14 + pos * 2); TextColor(RED); cout << "MAX!     ";
+		}
+	}
+	else if (to_be_print == 1) { // Print Upgrade status
+		bool flag = false;
+		if (pos == 0 && bonus_stats[pos] >= HP) flag = true;
+		if (pos == 1 && bonus_stats[pos] >= DAMAGE) flag = true;
+		if (pos == 2 && bonus_stats[pos] >= MS) flag = true;
+		if (pos == 3 && bonus_stats[pos] >= AS) flag = true;
+		if(flag)
+		{
+			GotoXY(63, 14 + pos * 2); cout << "MAX!     ";
+		}
+		else
+		{
+			GotoXY(63, 14 + pos * 2); cout << "UPGRADED!";
+			GotoXY(3, 3); cout << "SCORE: " << score << "     ";
+		}	
+	}
+	else if (to_be_print == 2) // Can't afford the upgrade
+	{
+		GotoXY(43, 23);
+		cout << "NOT ENOUGH SCORE TO BUY THE UPGRADE";
+		Sleep(1500);
+		GotoXY(43, 23);
+		cout << "                                   ";
+	}
+}
+
 void UpgradeCost(vector<int> cost) {
 	for (int i = 0; i < 4; i++) {
-		GotoXY(63, 14+i*2);
-		cout << cost[i] << " SCORE";
+		GotoXY(64, 14+i*2);
+		cout << cost[i];
 	}
 }
 
 void HoverUpgradeButton(int pos) {
-	string button[] = { "HP           +1", "DAMAGE       +1", "MOVING SPEED +20", "ATTACK SPEED +30"};
+	string button[] = { "HP            +1", "DAMAGE        +1", "MOVING SPEED +20", "ATTACK SPEED +30"};
 	int tmpColor = GetCurrentColor();
 	TextColor(RED & 15 | BACKGROUND_YELLOW);
 	GotoXY(46, 14 + pos * 2);

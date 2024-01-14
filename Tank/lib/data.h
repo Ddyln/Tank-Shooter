@@ -102,6 +102,11 @@ const char HP_BAR[] = { (char)219, (char)219, (char)219, (char)219};
 #define se second
 #define SPACE (char)32
 
+// limit for bonus stats
+#define HP 1
+#define DAMAGE 2
+#define MS 80
+#define AS 150
 
 // Data types
 enum typeOfObject {
