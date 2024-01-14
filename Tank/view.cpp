@@ -545,7 +545,7 @@ void MainMenu(board& a, gameSound& sound) {
 				return;
 			case 4:
 				GotoXY(0, 24);
-				exit(0);
+				PostMessage(GetConsoleWindow(), WM_CLOSE, 0, 0);
 			}
 		}
 		else if (c == myKeyW || c == myKeyS) {
