@@ -104,7 +104,7 @@ string ToString(int n) {
 
 gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& enemyDestination, int map, int score, vector<int> bonus_stats) {
 	TextColor(BLACK);
-	GotoXY(9, 1); cout << "Level " << map;
+	GotoXY(9, 2); cout << "Level " << map;
 	ifstream cin("assets/map0" + ToString(map) + ".txt");
 	int m = BOARD_HEIGHT, n = BOARD_WIDTH;
 
@@ -148,6 +148,7 @@ gameObject LoadMap(board& a, list <gameObject>& enemy, list <enemyDestInfo>& ene
 		GotoXY(0, 0);
 	}
 	DisplayPlayerHP(player);
+	DisplayPlayerStat(bonus_stats);
 	DisplayScore(score);
 	return player;
 }
